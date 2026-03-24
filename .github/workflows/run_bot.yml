@@ -1,48 +1,33 @@
-name: Ejecución Horaria del Oráculo
+name: Ejecución Cuántica Protegida (Docker)
 on:
   schedule:
-    - cron: '0 * * * *'  # Se ejecuta cada hora en punto
-  workflow_dispatch:      # Permite lanzarlo a mano con un botón
+    - cron: '0 * * * *'
+  workflow_dispatch:
 
 jobs:
-  build:
+  run-oracle:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout código
         uses: actions/checkout@v3
-      
-      - name: Configurar Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.9'
-          
-      - name: 🧹 Limpieza Profunda y Reinstalación
-        run: |
-          # 1. Eliminar cualquier rastro previo en el sitio de paquetes
-          pip freeze | xargs pip uninstall -y || true
-          
-          # 2. Forzar instalación de versiones compatibles (Pack Estabilidad)
-          # Instalamos primero Qiskit solo para asegurar que no suba de la 0.45
-          pip install --no-cache-dir qiskit==0.45.2
-          
-          # 3. Instalamos el resto de la suite cuántica
-          pip install --no-cache-dir qiskit-ibm-runtime==0.20.0
-          pip install --no-cache-dir pennylane==0.33.1
-          pip install --no-cache-dir pennylane-qiskit==0.33.0
-          pip install --no-cache-dir autoray==0.6.7
-          
-          # 4. Librerías de datos
-          pip install yfinance pandas numpy
-        
-      - name: Correr Oráculo
+
+      - name: Build and Run Docker
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
-        run: python bot_cuantico.py
+        run: |
+          # Construimos la imagen
+          docker build -t oraculo-bot .
+          
+          # La ejecutamos pasando el Token
+          docker run --name bot-container -e IBM_QUANTUM_TOKEN=$IBM_QUANTUM_TOKEN oraculo-bot
+          
+          # Sacamos el archivo CSV actualizado de la "caja" para guardarlo en GitHub
+          docker cp bot-container:/backtest_cuantico.csv ./backtest_cuantico.csv
 
-      - name: Guardar cambios en CSV
+      - name: Guardar cambios
         run: |
           git config --global user.name 'QuantumBot'
           git config --global user.email 'bot@github.com'
           git add backtest_cuantico.csv
-          git commit -m "Actualización de predicción cuántica" || echo "No hay cambios"
+          git commit -m "Actualización desde Docker" || echo "Sin cambios"
           git push
