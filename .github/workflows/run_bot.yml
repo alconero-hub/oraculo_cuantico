@@ -16,15 +16,19 @@ jobs:
         with:
           python-version: '3.9'
           
-      - name: Instalar librerías (Versión Estable 0.45)
+      - name: 🔥 Limpieza y Reinstalación Total
         run: |
-          pip install qiskit==0.45.2 
-          pip install qiskit-ibm-runtime==0.20.0 
-          pip install pennylane==0.33.1 
-          pip install pennylane-qiskit==0.33.0 
-          pip install autoray==0.6.7 
-          pip install yfinance pandas numpy
+          # 1. Eliminamos cualquier rastro que cause el conflicto
+          pip uninstall -y qiskit qiskit-terra qiskit-ibm-runtime pennylane-qiskit
           
+          # 2. Instalamos el "Pack de Estabilidad" (Orden crítico)
+          pip install qiskit==0.45.2
+          pip install qiskit-ibm-runtime==0.20.0
+          pip install pennylane==0.33.1
+          pip install pennylane-qiskit==0.33.0
+          pip install autoray==0.6.7
+          pip install yfinance pandas numpy
+        
       - name: Correr Oráculo
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
