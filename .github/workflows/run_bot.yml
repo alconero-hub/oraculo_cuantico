@@ -1,4 +1,4 @@
-name: Oráculo Cuántico Final
+name: Oráculo Cuántico Estable
 on:
   schedule:
     - cron: '0 * * * *'
@@ -14,15 +14,17 @@ jobs:
       - name: Configurar Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.9'
 
-      - name: 🔥 Instalación Ultra-Estable
+      - name: 📦 Instalación de Compatibilidad Total
         run: |
-          # Limpiamos cualquier rastro de versiones viejas
-          pip uninstall -y qiskit qiskit-terra qiskit-ibm-runtime pennylane-qiskit
-          
-          # Instalamos las versiones modernas que SÍ resuelven el DNS de IBM
-          pip install qiskit>=1.0.0 qiskit-ibm-runtime pennylane pennylane-qiskit yfinance pandas numpy
+          pip install --upgrade pip
+          # Instalamos la versión puente que tiene qiskit.qobj pero es moderna
+          pip install qiskit==0.46.0
+          pip install qiskit-ibm-runtime==0.21.0
+          pip install pennylane==0.35.0
+          pip install pennylane-qiskit==0.35.0
+          pip install yfinance pandas numpy autoray==0.6.7
           
       - name: Correr Oráculo
         env:
