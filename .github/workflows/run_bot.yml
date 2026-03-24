@@ -1,0 +1,33 @@
+name: Ejecución Horaria del Oráculo
+on:
+  schedule:
+    - cron: '0 * * * *'  # Se ejecuta cada hora en punto
+  workflow_dispatch:      # Permite lanzarlo a mano con un botón
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v3
+      
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          
+      - name: Instalar librerías
+        run: pip install pennylane qiskit-ibm-runtime yfinance pandas
+        
+      - name: Correr Oráculo
+        env:
+          IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
+        run: python bot_cuantico.py
+        
+      - name: Guardar cambios en CSV
+        run: |
+          git config --global user.name 'QuantumBot'
+          git config --global user.email 'bot@github.com'
+          git add backtest_cuantico.csv
+          git commit -m "Actualización de predicción cuántica" || echo "No hay cambios"
+          git push
