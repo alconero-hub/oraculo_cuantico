@@ -11,7 +11,7 @@ from qiskit_ibm_runtime import QiskitRuntimeService
 token_ibm = os.getenv("IBM_QUANTUM_TOKEN")
 
 try:
-    service = QiskitRuntimeService(channel="ibm_quantum", token=token_ibm)
+    service = QiskitRuntimeService(channel="ibm_quantum_platform", token=token_ibm)
     # Selecciona el chip real menos ocupado
     backend_fisico = service.least_busy(simulator=False, min_num_qubits=5)
     
