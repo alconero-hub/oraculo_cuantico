@@ -3,65 +3,61 @@ import yfinance as yf
 import pandas as pd
 import numpy as np
 from datetime import datetime
-
-# Importaciones protegidas
 from qiskit_ibm_runtime import QiskitRuntimeService
 import pennylane as qml
 
-# --- 1. CONEXIÓN ---
+# --- 1. CONEXIÓN (Qiskit 1.x) ---
 token = os.getenv("IBM_QUANTUM_TOKEN")
 
 try:
-    # Usamos el canal oficial de IBM Quantum
+    # Inicializamos el servicio moderno
     service = QiskitRuntimeService(channel="ibm_quantum", token=token)
-    # Intentamos obtener un backend real, si falla usamos simulador para no romper el flujo
-    try:
-        backend = service.least_busy(operational=True, simulator=False)
-        backend_name = backend.name
-    except:
-        backend_name = "ibmq_qasm_simulator"
     
-    # Dispositivo PennyLane con el conector de Qiskit
+    # En Qiskit 1.x, PennyLane prefiere que usemos nombres de backend
+    # Usamos el simulador por defecto para asegurar que el DNS no falle en el primer intento
+    backend_name = "ibmq_qasm_simulator"
+    
+    # Nuevo conector PennyLane-Qiskit compatible con 1.x
     dev = qml.device('qiskit.remote', wires=5, backend=backend_name, shots=1024)
 
     @qml.qnode(dev)
-    def oraculo_cuantico(datos, pesos):
-        for i in range(4): qml.RY(datos[i], wires=i)
-        for i in range(4): qml.CNOT(wires=[i, 4])
-        qml.RY(pesos, wires=4)
+    def oraculo_cuantico(datos):
+        # Codificación simple pero efectiva
+        for i in range(len(datos)):
+            qml.RY(datos[i], wires=i)
+        qml.CNOT(wires=[0, 4])
         return qml.expval(qml.PauliZ(4))
 
-    print(f"✅ Conectado a: {backend_name}")
+    print(f"✅ Sistema Cuántico 1.x Iniciado en {backend_name}")
 except Exception as e:
-    print(f"❌ Fallo de conexión: {e}")
+    print(f"❌ Error de inicialización: {e}")
     exit(1)
 
-# --- 2. DATOS Y ESTRATEGIA ---
-data = yf.download("BTC-USD", period="2d", interval="15m", progress=False)
-if data.empty: exit(1)
+# --- 2. DATOS DE MERCADO ---
+try:
+    df = yf.download("BTC-USD", period="1d", interval="15m", progress=False)
+    # Tomamos variaciones porcentuales para el ADN
+    cambios = df['Close'].pct_change().dropna().tail(4).values * 100
+    adn = [np.arctan(x) for x in cambios] # Convertimos a ángulos
+    
+    # Ejecución
+    resultado = float(oraculo_cuantico(adn))
+except Exception as e:
+    print(f"❌ Error en datos: {e}")
+    exit(1)
 
-ultimo_p = float(data['Close'].iloc[-1])
-# ADN: Relación de precios actuales vs pasados
-adn = [np.arctan(ultimo_p/data['Close'].iloc[-i]) for i in range(2, 6)]
-
-# Ejecución del oráculo
-resultado = float(oraculo_cuantico(adn, 0.5))
-
-# --- 3. GUARDADO ---
+# --- 3. PERSISTENCIA ---
 archivo = 'backtest_cuantico.csv'
-# Crear DataFrame con la predicción
 nueva_fila = pd.DataFrame([{
     'Fecha': datetime.now().strftime("%Y-%m-%d %H:%M"),
     'Veredicto': round(resultado, 4),
-    'Precio': round(ultimo_p, 2)
+    'Precio': round(float(df['Close'].iloc[-1]), 2)
 }])
 
-# Leer existente o crear nuevo
 if os.path.exists(archivo):
-    df = pd.read_csv(archivo)
-    df = pd.concat([df, nueva_fila], ignore_index=True)
+    df_old = pd.read_csv(archivo)
+    pd.concat([df_old, nueva_fila], ignore_index=True).to_csv(archivo, index=False)
 else:
-    df = nueva_fila
+    nueva_fila.to_csv(archivo, index=False)
 
-df.to_csv(archivo, index=False)
-print(f"🚀 Predicción guardada: {resultado:+.4f}")
+print(f"🚀 Predicción guardada con éxito: {resultado}")
