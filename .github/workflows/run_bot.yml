@@ -17,7 +17,7 @@ jobs:
           python-version: '3.9'
           
       - name: Instalar librerías
-        run: pip install pennylane==0.33.1 autoray==0.6.7 qiskit-ibm-runtime yfinance pandas
+        run: pip install pennylane==0.33.1 autoray==0.6.7 pennylane-qiskit qiskit-ibm-runtime yfinance pandas numpy
         
       - name: Correr Oráculo
         env:
