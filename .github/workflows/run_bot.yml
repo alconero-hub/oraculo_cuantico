@@ -1,33 +1,30 @@
-name: Ejecución Cuántica Protegida (Docker)
+name: Oráculo Cuántico en Docker
 on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
 
 jobs:
-  run-oracle:
+  build-and-run:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout código
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Build and Run Docker
+      - name: Construir y Correr Contenedor
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
         run: |
-          # Construimos la imagen
-          docker build -t oraculo-bot .
-          
-          # La ejecutamos pasando el Token
-          docker run --name bot-container -e IBM_QUANTUM_TOKEN=$IBM_QUANTUM_TOKEN oraculo-bot
-          
-          # Sacamos el archivo CSV actualizado de la "caja" para guardarlo en GitHub
-          docker cp bot-container:/backtest_cuantico.csv ./backtest_cuantico.csv
+          docker build -t q-bot .
+          # Corremos el bot y le damos un nombre al contenedor para luego extraer el archivo
+          docker run --name running-bot -e IBM_QUANTUM_TOKEN=${{ secrets.IBM_QUANTUM_TOKEN }} q-bot
+          # Copiamos el CSV desde dentro del contenedor hacia afuera (al repo de GitHub)
+          docker cp running-bot:/app/backtest_cuantico.csv ./backtest_cuantico.csv
 
-      - name: Guardar cambios
+      - name: Push de resultados
         run: |
-          git config --global user.name 'QuantumBot'
-          git config --global user.email 'bot@github.com'
+          git config --global user.name 'GitHub Action'
+          git config --global user.email 'action@github.com'
           git add backtest_cuantico.csv
-          git commit -m "Actualización desde Docker" || echo "Sin cambios"
+          git commit -m "Update backtest via Docker" || echo "No changes"
           git push
