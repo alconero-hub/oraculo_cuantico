@@ -16,12 +16,12 @@ jobs:
         with:
           python-version: '3.9'
           
-      - name: 🔥 Limpieza y Reinstalación Total
+      - name: 🔥 Limpieza y Reinstalación Total (Evita conflicto 1.0)
         run: |
-          # 1. Eliminamos cualquier rastro que cause el conflicto
+          # 1. Eliminamos cualquier rastro que cause el conflicto de versiones
           pip uninstall -y qiskit qiskit-terra qiskit-ibm-runtime pennylane-qiskit
           
-          # 2. Instalamos el "Pack de Estabilidad" (Orden crítico)
+          # 2. Instalamos el "Pack de Estabilidad" en orden crítico
           pip install qiskit==0.45.2
           pip install qiskit-ibm-runtime==0.20.0
           pip install pennylane==0.33.1
