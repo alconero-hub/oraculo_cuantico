@@ -11,7 +11,7 @@ token = os.getenv("IBM_QUANTUM_TOKEN")
 
 try:
     # Inicializamos el servicio moderno
-    service = QiskitRuntimeService(channel="ibm_quantum", token=token)
+    service = QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
     
     # En Qiskit 1.x, PennyLane prefiere que usemos nombres de backend
     # Usamos el simulador por defecto para asegurar que el DNS no falle en el primer intento
