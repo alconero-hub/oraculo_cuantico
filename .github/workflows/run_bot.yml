@@ -1,4 +1,4 @@
-name: Oráculo Cuántico Estable
+name: Oráculo Cuántico Pro
 on:
   schedule:
     - cron: '0 * * * *'
@@ -9,28 +9,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configurar Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
-          python-version: '3.9'
+          python-version: '3.11' # Versión moderna para Qiskit 1.x
 
-      - name: 🧹 Limpieza Quirúrgica e Instalación
+      - name: Instalación Moderna
         run: |
-          # 1. Borramos CUALQUIER rastro de Qiskit que GitHub traiga por defecto
-          pip uninstall -y qiskit qiskit-terra qiskit-ibm-runtime pennylane-qiskit
-          
-          # 2. Borramos físicamente las carpetas si quedara algo (fuerza bruta)
-          rm -rf /opt/hostedtoolcache/Python/3.9.*/x64/lib/python3.9/site-packages/qiskit*
-          
-          # 3. Instalación limpia y aislada
-          pip install --no-cache-dir qiskit==0.46.0
-          pip install --no-cache-dir qiskit-ibm-runtime==0.21.0
-          pip install --no-cache-dir pennylane==0.35.1
-          pip install --no-cache-dir pennylane-qiskit==0.35.0
-          pip install --no-cache-dir yfinance pandas numpy autoray==0.6.7
-          
+          pip install --upgrade pip
+          pip install qiskit qiskit-ibm-runtime pennylane pennylane-qiskit yfinance pandas numpy
+
       - name: Correr Oráculo
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
@@ -41,5 +31,5 @@ jobs:
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
           git add backtest_cuantico.csv
-          git commit -m "Update backtest" || echo "No changes"
+          git commit -m "Update prediction" || echo "No changes"
           git push
