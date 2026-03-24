@@ -21,6 +21,7 @@ jobs:
           # 2. Corremos con '--network host' para que tenga internet sin restricciones
           docker run --name running-bot \
             --network host \
+            --dns 8.8.8.8 \
             -e IBM_QUANTUM_TOKEN=${{ secrets.IBM_QUANTUM_TOKEN }} \
             q-bot
           
