@@ -1,37 +1,38 @@
-name: Oráculo Cuántico en Docker
+name: Oráculo Cuántico Final
 on:
   schedule:
     - cron: '0 * * * *'
   workflow_dispatch:
 
 jobs:
-  build-and-run:
+  run-bot:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Construir y Correr Contenedor
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: 🔥 Instalación Ultra-Estable
+        run: |
+          # Limpiamos cualquier rastro de versiones viejas
+          pip uninstall -y qiskit qiskit-terra qiskit-ibm-runtime pennylane-qiskit
+          
+          # Instalamos las versiones modernas que SÍ resuelven el DNS de IBM
+          pip install qiskit>=1.0.0 qiskit-ibm-runtime pennylane pennylane-qiskit yfinance pandas numpy
+          
+      - name: Correr Oráculo
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
-        run: |
-          # 1. Construimos la imagen con normalidad
-          docker build -t q-bot .
-          
-          # 2. Corremos con '--network host' para que tenga internet sin restricciones
-          docker run --name running-bot \
-            --network host \
-            --dns 8.8.8.8 \
-            -e IBM_QUANTUM_TOKEN=${{ secrets.IBM_QUANTUM_TOKEN }} \
-            q-bot
-          
-          # 3. Extraemos el resultado
-          docker cp running-bot:/app/backtest_cuantico.csv ./backtest_cuantico.csv
+        run: python bot_cuantico.py
 
-      - name: Push de resultados
+      - name: Guardar cambios
         run: |
           git config --global user.name 'GitHub Action'
           git config --global user.email 'action@github.com'
           git add backtest_cuantico.csv
-          git commit -m "Update backtest via Docker" || echo "No changes"
+          git commit -m "Update backtest" || echo "No changes"
           git push
