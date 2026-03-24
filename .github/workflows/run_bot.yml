@@ -16,15 +16,20 @@ jobs:
         with:
           python-version: '3.9'
 
-      - name: 📦 Instalación de Compatibilidad Total
+      - name: 🧹 Limpieza Quirúrgica e Instalación
         run: |
-          pip install --upgrade pip
-          # Instalamos la versión puente que tiene qiskit.qobj pero es moderna
-          pip install qiskit==0.46.0
-          pip install qiskit-ibm-runtime==0.21.0
-          pip install pennylane==0.35.0
-          pip install pennylane-qiskit==0.35.0
-          pip install yfinance pandas numpy autoray==0.6.7
+          # 1. Borramos CUALQUIER rastro de Qiskit que GitHub traiga por defecto
+          pip uninstall -y qiskit qiskit-terra qiskit-ibm-runtime pennylane-qiskit
+          
+          # 2. Borramos físicamente las carpetas si quedara algo (fuerza bruta)
+          rm -rf /opt/hostedtoolcache/Python/3.9.*/x64/lib/python3.9/site-packages/qiskit*
+          
+          # 3. Instalación limpia y aislada
+          pip install --no-cache-dir qiskit==0.46.0
+          pip install --no-cache-dir qiskit-ibm-runtime==0.21.0
+          pip install --no-cache-dir pennylane==0.35.1
+          pip install --no-cache-dir pennylane-qiskit==0.35.0
+          pip install --no-cache-dir yfinance pandas numpy autoray==0.6.7
           
       - name: Correr Oráculo
         env:
