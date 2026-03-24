@@ -15,10 +15,16 @@ jobs:
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
         run: |
+          # 1. Construimos la imagen con normalidad
           docker build -t q-bot .
-          # Corremos el bot y le damos un nombre al contenedor para luego extraer el archivo
-          docker run --name running-bot -e IBM_QUANTUM_TOKEN=${{ secrets.IBM_QUANTUM_TOKEN }} q-bot
-          # Copiamos el CSV desde dentro del contenedor hacia afuera (al repo de GitHub)
+          
+          # 2. Corremos con '--network host' para que tenga internet sin restricciones
+          docker run --name running-bot \
+            --network host \
+            -e IBM_QUANTUM_TOKEN=${{ secrets.IBM_QUANTUM_TOKEN }} \
+            q-bot
+          
+          # 3. Extraemos el resultado
           docker cp running-bot:/app/backtest_cuantico.csv ./backtest_cuantico.csv
 
       - name: Push de resultados
