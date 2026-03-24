@@ -1,9 +1,3 @@
-Aquí tienes el código completo y corregido para el archivo bot_cuantico.py. He incluido las librerías con las versiones específicas para evitar el error de autoray, el Escudo de Volatilidad, y la lógica robusta para escribir en el CSV.
-
-Este código es el "motor" que GitHub Actions despertará cada hora.
-
-Archivo: bot_cuantico.py
-Python
 import os
 import numpy as np
 import pandas as pd
