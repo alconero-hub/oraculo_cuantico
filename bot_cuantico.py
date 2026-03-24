@@ -11,7 +11,7 @@ token = os.getenv("IBM_QUANTUM_TOKEN")
 
 try:
     # Inicializamos el servicio
-    service = QiskitRuntimeService(channel="ibm_quantum", token=token)
+    service = QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
     
     # BUSCAR MÁQUINA REAL: Filtramos para excluir simuladores y buscar el menos ocupado
     # operational=True (que esté encendida)
