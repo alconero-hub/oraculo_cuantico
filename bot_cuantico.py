@@ -10,7 +10,7 @@ import pennylane as qml
 token = os.getenv("IBM_QUANTUM_TOKEN")
 
 try:
-    service = QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
+    service = QiskitRuntimeService(channel="ibm_quantum", token=token)
     # Buscamos el chip real con menos cola
     backend = service.least_busy(operational=True, simulator=False, min_num_qubits=5)
     
@@ -23,8 +23,9 @@ try:
 
     @qml.qnode(dev)
     def oraculo_cuantico(datos):
+        # Convertimos cada dato a float puro para evitar errores en el QNode
         for i in range(len(datos)):
-            qml.RY(float(datos[i]), wires=i) # Forzamos float aquí también
+            qml.RY(float(datos[i]), wires=i)
         
         qml.CNOT(wires=[0, 1])
         qml.CNOT(wires=[1, 2])
@@ -34,22 +35,26 @@ try:
         return qml.expval(qml.PauliZ(4))
 
 except Exception as e:
-    print(f"❌ Error al acceder a la QPU: {e}")
+    print(f"❌ Error de inicialización: {e}")
     exit(1)
 
 # --- 2. DATOS DE MERCADO ---
 try:
-    df = yf.download("BTC-USD", period="1d", interval="15m", progress=False)
-    if df.empty:
-        print("⚠️ No hay datos."); exit(0)
+    # Descargamos un poco más de margen para asegurar que tenemos datos suficientes
+    df = yf.download("BTC-USD", period="2d", interval="15m", progress=False)
+    if df.empty or len(df) < 5:
+        print("⚠️ Datos insuficientes en Yahoo Finance."); exit(0)
         
+    # EXTRACCIÓN SEGURA: Usamos .iloc[-1] y forzamos a float escalar
     ultimo_p = float(df['Close'].iloc[-1])
-    cambios = df['Close'].pct_change().dropna().tail(4).values * 100
-    adn = [np.arctan(x) for x in cambios]
     
-    print("🧠 Ejecutando en hardware de IBM (esto puede tardar por la cola)...")
+    # ADN: Cambios porcentuales de las últimas 4 velas
+    cambios = df['Close'].pct_change().dropna().tail(4).values
+    adn = [np.arctan(float(x) * 100) for x in cambios]
     
-    # CORRECCIÓN AQUÍ: Usamos np.array(...).item() para evitar el error de scalar
+    print(f"🧠 BTC Actual: ${ultimo_p} | Ejecutando en {backend.name}...")
+    
+    # EJECUCIÓN: Convertimos el resultado de PennyLane a escalar puro
     raw_res = oraculo_cuantico(adn)
     resultado = float(np.array(raw_res).item())
     
@@ -72,4 +77,4 @@ if os.path.exists(archivo):
 else:
     nueva_fila.to_csv(archivo, index=False)
 
-print(f"🚀 [REAL QPU] Veredicto guardado: {resultado:+.4f} | Precio: ${ultimo_p}")
+print(f"🚀 [ÉXITO] Veredicto: {resultado:+.4f} | Guardado en CSV.")
