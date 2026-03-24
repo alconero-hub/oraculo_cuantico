@@ -1,6 +1,6 @@
 # 🌌 Oráculo Cuántico BTC
 
-![Estado del Bot](https://github.com/TU_USUARIO/TU_REPO/actions/workflows/nombre_de_tu_archivo.yml/badge.svg)
+![Estado del Bot](https://github.com/alconero-hub/oraculo_cuantico/actions/workflows/nombre_de_tu_archivo.yml/badge.svg)
 ![Licencia](https://img.shields.io/badge/License-MIT-blue.svg)
 ![Python](https://img.shields.io/badge/Python-3.11-green.svg)
 
