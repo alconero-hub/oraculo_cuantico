@@ -1,10 +1,12 @@
 import os
-import numpy as np
-import pandas as pd
 import yfinance as yf
+import pandas as pd
+import numpy as np
 from datetime import datetime
-import pennylane as qml
+
+# Importación crítica después de los básicos
 from qiskit_ibm_runtime import QiskitRuntimeService
+import pennylane as qml
 
 # --- 1. CONFIGURACIÓN DE CONEXIÓN ---
 token_ibm = os.getenv("IBM_QUANTUM_TOKEN")
