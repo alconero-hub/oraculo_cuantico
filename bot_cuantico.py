@@ -10,7 +10,7 @@ import pennylane as qml
 token = os.getenv("IBM_QUANTUM_TOKEN")
 
 try:
-    service = QiskitRuntimeService(channel="ibm_quantum", token=token)
+    service = QiskitRuntimeService(channel="ibm_quantum_platform", token=token)
     # Buscamos el chip real con menos cola
     backend = service.least_busy(operational=True, simulator=False, min_num_qubits=5)
     
