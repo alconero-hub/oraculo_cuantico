@@ -16,24 +16,29 @@ jobs:
         with:
           python-version: '3.9'
           
-      - name: 🔥 Limpieza y Reinstalación Total (Evita conflicto 1.0)
+      - name: 🧹 Limpieza Profunda y Reinstalación
         run: |
-          # 1. Eliminamos cualquier rastro que cause el conflicto de versiones
-          pip uninstall -y qiskit qiskit-terra qiskit-ibm-runtime pennylane-qiskit
+          # 1. Eliminar cualquier rastro previo en el sitio de paquetes
+          pip freeze | xargs pip uninstall -y || true
           
-          # 2. Instalamos el "Pack de Estabilidad" en orden crítico
-          pip install qiskit==0.45.2
-          pip install qiskit-ibm-runtime==0.20.0
-          pip install pennylane==0.33.1
-          pip install pennylane-qiskit==0.33.0
-          pip install autoray==0.6.7
+          # 2. Forzar instalación de versiones compatibles (Pack Estabilidad)
+          # Instalamos primero Qiskit solo para asegurar que no suba de la 0.45
+          pip install --no-cache-dir qiskit==0.45.2
+          
+          # 3. Instalamos el resto de la suite cuántica
+          pip install --no-cache-dir qiskit-ibm-runtime==0.20.0
+          pip install --no-cache-dir pennylane==0.33.1
+          pip install --no-cache-dir pennylane-qiskit==0.33.0
+          pip install --no-cache-dir autoray==0.6.7
+          
+          # 4. Librerías de datos
           pip install yfinance pandas numpy
         
       - name: Correr Oráculo
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
         run: python bot_cuantico.py
-        
+
       - name: Guardar cambios en CSV
         run: |
           git config --global user.name 'QuantumBot'
