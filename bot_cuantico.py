@@ -1,11 +1,3 @@
-Ese error es un clásico de PennyLane 0.35+ cuando se comunica con hardware real. Ocurre porque, al medir en una QPU física, PennyLane a veces devuelve el resultado como un array de NumPy (con un solo valor, pero array al fin y al cabo) y la función float() de Python se confunde al intentar convertirlo.
-
-Para arreglarlo, debemos usar .item() o asegurarnos de que el resultado sea tratado como un escalar de NumPy antes de la conversión.
-
-🛠️ El bot_cuantico.py Corregido (Hardware Real)
-He aplicado la corrección en la línea del resultado y he añadido un pequeño "filtro de seguridad" para el ADN, ya que a veces los datos de Yahoo Finance pueden dar problemas de formato al entrar en el circuito cuántico.
-
-Python
 import os
 import yfinance as yf
 import pandas as pd
