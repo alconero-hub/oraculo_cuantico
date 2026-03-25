@@ -1,48 +1,34 @@
-name: Oráculo Cuántico Pro con Gráficas
+name: Oráculo Cuántico 2026
 
 on:
   schedule:
-    # '5 */2 * * *' significa: al minuto 5, cada 2 horas
-    - cron: '5 */2 * * *' 
-  workflow_dispatch:      # Mantenemos esto para que puedas lanzarlo tú cuando quieras
+    - cron: '5 */2 * * *'
+  workflow_dispatch:
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
-    
     permissions:
       contents: write
-
     steps:
-      - name: 📥 Checkout del repositorio
-        uses: actions/checkout@v4
-
-      - name: 🐍 Configurar Python 3.11
-        uses: actions/setup-python@v5
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-
-      - name: 📦 Instalación de Librerías
-        run: |
-          pip install --upgrade pip
-          pip install qiskit qiskit-ibm-runtime pennylane pennylane-qiskit yfinance pandas numpy matplotlib
-
-      - name: 🧠 Ejecutar Oráculo Cuántico e IBM
+      - name: Instalación
+        run: pip install qiskit qiskit-ibm-runtime pennylane pennylane-qiskit yfinance pandas numpy matplotlib
+      - name: Ejecución
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
         run: |
           python bot_cuantico.py
           python graficar_rendimiento.py
-
-      - name: 💾 Guardar y Subir Cambios
+      - name: Push
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name 'GitHub Action Bot'
-          git config --global user.email 'action@github.com'
-          
-          git add backtest_cuantico.csv rendimiento_cuantico.png || echo "No hay archivos"
-          
-          git commit -m "📊 Update: Predicción cada 2h y Gráfica [$(date)]" || echo "Sin cambios"
-          
+          git config --global user.name 'Quantum Bot'
+          git config --global user.email 'bot@quantum.com'
+          git add .
+          git commit -m "📊 Update Cuántico [$(date)]" || echo "No changes"
           git push origin main
