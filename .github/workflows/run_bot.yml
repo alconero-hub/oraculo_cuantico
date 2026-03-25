@@ -2,8 +2,8 @@ name: Oráculo Cuántico 2026
 
 on:
   schedule:
-    - cron: '5 */2 * * *'
-  workflow_dispatch:
+    - cron: '5 */2 * * *' # Ejecuta cada 2 horas (02:05, 04:05, etc.)
+  workflow_dispatch:      # Permite dispararlo manualmente
 
 jobs:
   run-bot:
@@ -11,24 +11,32 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+
+      - name: 🐍 Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Instalación
-        run: pip install qiskit qiskit-ibm-runtime pennylane pennylane-qiskit yfinance pandas numpy matplotlib
-      - name: Ejecución
+
+      - name: 📦 Instalar dependencias
+        run: |
+          pip install --upgrade pip
+          pip install qiskit qiskit-ibm-runtime pennylane pennylane-qiskit yfinance pandas numpy matplotlib
+
+      - name: 🧠 Ejecutar Oráculo y Graficador
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
         run: |
           python bot_cuantico.py
           python graficar_rendimiento.py
-      - name: Push
+
+      - name: 💾 Subir Cambios
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name 'Quantum Bot'
           git config --global user.email 'bot@quantum.com'
           git add .
-          git commit -m "📊 Update Cuántico [$(date)]" || echo "No changes"
+          git commit -m "📊 Update: Estrategia Cuántica con Ahorro [$(date)]" || echo "No changes"
           git push origin main
