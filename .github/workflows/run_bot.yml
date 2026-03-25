@@ -1,11 +1,3 @@
-Para que el bot se ejecute cada dos horas, solo necesitamos ajustar la expresión cron en la sección on: schedule:.
-
-En la sintaxis cron, el campo de las horas se modifica con /2, lo que le indica a GitHub: "ejecuta esto cada vez que la hora sea divisible por 2" (0, 2, 4, 6, etc.).
-
-Archivo: .github/workflows/run_bot.yml (Actualizado)
-He ajustado el cron y he mantenido toda la estructura de permisos y graficado que ya teníamos:
-
-YAML
 name: Oráculo Cuántico Pro con Gráficas
 
 on:
