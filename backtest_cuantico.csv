@@ -1,1 +1,2 @@
-Fecha,Ticket,Decision_Q0,Memoria_Q4,Precio_Entrada,Precio_60min,Resultado
+Fecha,Ticket,Decision_Q0,Memoria_Q4,Precio_Entrada,Precio_60min,Resultado,Veredicto,Precio,Backend
+2026-03-25 07:00,,,,,,,0.8789,71058.25,ibm_marrakesh
