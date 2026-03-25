@@ -42,7 +42,7 @@ try:
     
     # Reducimos el umbral a 0.01% para que sea más sensible
     volatilidad = np.mean(np.abs(cambios)) * 100
-    umbral_minimo = 0.01 
+    umbral_minimo = 0.02 
 
     if volatilidad < umbral_minimo:
         print(f"😴 Mercado muy plano ({volatilidad:.4f}%).")
