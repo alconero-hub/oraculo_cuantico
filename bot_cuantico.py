@@ -15,7 +15,7 @@ try:
     backend = service.least_busy(operational=True, simulator=False, min_num_qubits=5)
     print(f"📡 Conectado a QPU Real: {backend.name}")
 
-    dev = qml.device('qiskit.remote', wires=5, backend=backend, shots=1024)
+    dev = qml.device('qiskit.remote', wires=5, backend=backend, shots=4096)
 
     @qml.qnode(dev)
     def oraculo_cuantico(datos):
