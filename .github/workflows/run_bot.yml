@@ -1,35 +1,56 @@
-name: Oráculo Cuántico Pro
+Para que el bot se ejecute cada dos horas, solo necesitamos ajustar la expresión cron en la sección on: schedule:.
+
+En la sintaxis cron, el campo de las horas se modifica con /2, lo que le indica a GitHub: "ejecuta esto cada vez que la hora sea divisible por 2" (0, 2, 4, 6, etc.).
+
+Archivo: .github/workflows/run_bot.yml (Actualizado)
+He ajustado el cron y he mantenido toda la estructura de permisos y graficado que ya teníamos:
+
+YAML
+name: Oráculo Cuántico Pro con Gráficas
+
 on:
   schedule:
-    - cron: '3 * * * *'
-  workflow_dispatch:
+    # '5 */2 * * *' significa: al minuto 5, cada 2 horas
+    - cron: '5 */2 * * *' 
+  workflow_dispatch:      # Mantenemos esto para que puedas lanzarlo tú cuando quieras
 
 jobs:
   run-bot:
     runs-on: ubuntu-latest
+    
+    permissions:
+      contents: write
+
     steps:
-      - name: Checkout
+      - name: 📥 Checkout del repositorio
         uses: actions/checkout@v4
 
-      - name: Configurar Python
+      - name: 🐍 Configurar Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # Versión moderna para Qiskit 1.x
+          python-version: '3.11'
 
-      - name: Instalación Moderna
+      - name: 📦 Instalación de Librerías
         run: |
           pip install --upgrade pip
-          pip install qiskit qiskit-ibm-runtime pennylane pennylane-qiskit yfinance pandas numpy
+          pip install qiskit qiskit-ibm-runtime pennylane pennylane-qiskit yfinance pandas numpy matplotlib
 
-      - name: Correr Oráculo
+      - name: 🧠 Ejecutar Oráculo Cuántico e IBM
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
-        run: python bot_cuantico.py
-
-      - name: Guardar cambios
         run: |
-          git config --global user.name 'GitHub Action'
+          python bot_cuantico.py
+          python graficar_rendimiento.py
+
+      - name: 💾 Guardar y Subir Cambios
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name 'GitHub Action Bot'
           git config --global user.email 'action@github.com'
-          git add backtest_cuantico.csv
-          git commit -m "Update prediction" || echo "No changes"
-          git push
+          
+          git add backtest_cuantico.csv rendimiento_cuantico.png || echo "No hay archivos"
+          
+          git commit -m "📊 Update: Predicción cada 2h y Gráfica [$(date)]" || echo "Sin cambios"
+          
+          git push origin main
