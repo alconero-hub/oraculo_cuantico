@@ -57,7 +57,7 @@ try:
     
     # Filtro de Volatilidad (Ahorro de QPU)
     volatilidad = np.mean(np.abs(cambios)) * 100
-    umbral_minimo = 0.01 # 0.01% de movimiento mínimo
+    umbral_minimo = 0.02 # 0.02% de movimiento mínimo
 
     if volatilidad < umbral_minimo:
         print(f"😴 Mercado muy plano ({volatilidad:.4f}%). Veredicto 0.0.")
