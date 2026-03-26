@@ -59,52 +59,57 @@ except Exception as e:
 
 # --- 3. FUNCIÓN DE ACTUALIZACIÓN (SISTEMA REGEX ANTI-DUPLICADOS) ---
 def actualizar_readme(res, precio, vol, b_name):
-    # Definición de semáforo
-    if vol < 0.01: 
-        semaforo = "⚪ **DORMIDO**"
-    elif res > 0.15: 
-        semaforo = "🟢 **COMPRA**"
-    elif res < -0.15: 
-        semaforo = "🔴 **VENTA**"
-    else: 
-        semaforo = "🟡 **ESPERA**"
+    # --- TÁCTICA DE DECISIÓN EXTREMA ---
+    if vol < 0.01:
+        estado = "⚪ **MERCADO DORMIDO** (Baja Volatilidad)"
+        color_box = "blue"
+    elif res > 0.60: # Veredicto muy positivo
+        estado = "🚀 **COMPRA FUERTE** (Señal Cuántica Máxima)"
+        color_box = "green"
+    elif res > 0.15:
+        estado = "🟢 **COMPRA MODERADA**"
+        color_box = "green"
+    elif res < -0.60: # Veredicto muy negativo
+        estado = "💀 **VENTA FUERTE** (Alerta de Caída)"
+        color_box = "red"
+    elif res < -0.15:
+        estado = "🔴 **VENTA MODERADA**"
+        color_box = "red"
+    else:
+        estado = "🟡 **ESPERA** (Neutralidad)"
+        color_box = "yellow"
 
-    archivo_path = "README.md"
-    inicio_tag = ""
-    fin_tag = ""
+    # --- TÁCTICA DE ESCRITURA TOTAL ---
+    # No buscamos etiquetas, escribimos el archivo entero cada vez
+    contenido_nuevo = f"""# 🌌 Oráculo Cuántico BTC
+
+![Estado](https://img.shields.io/badge/ORÁCULO-{estado.replace(' ', '%20')}-{color_box}?style=for-the-badge)
+
+### 🚦 Veredicto Actual
+> # {estado}
+
+**Detalles Técnicos:**
+* **Precio Actual:** ${precio:,.2f}
+* **Poder Cuántico (Veredicto):** {res:+.4f}
+* **Volatilidad:** {vol:.4f}%
+* **Procesador:** {b_name}
+* **Última Actualización:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} UTC
+
+---
+
+### 📈 Gráfica de Rendimiento
+![Gráfica](./rendimiento_cuantico.png)
+
+---
+*Aviso: Este sistema utiliza entrelazamiento de qubits en hardware real de IBM. No es consejo financiero.*
+"""
 
     try:
-        if not os.path.exists(archivo_path):
-            with open(archivo_path, "w") as f: f.write("# Oráculo BTC\n" + inicio_tag + "\n" + fin_tag)
-
-        with open(archivo_path, "r", encoding="utf-8") as f:
-            contenido = f.read()
-
-        # BLOQUE NUEVO
-        nuevo_bloque = (
-            f"{inicio_tag}\n"
-            f"> **Última Señal:** {semaforo} | **Precio:** ${precio:,.2f}\n"
-            f"> **Veredicto:** {res:+.4f} | **Hardware:** {b_name}\n"
-            f"> **Actualizado:** {datetime.now().strftime('%H:%M:%S')} UTC\n"
-            f"{fin_tag}"
-        )
-
-        # SI EXISTEN LAS ETIQUETAS: Reemplazo Quirúrgico
-        if inicio_tag in contenido and fin_tag in contenido:
-            import re
-            patron = re.compile(f"{re.escape(inicio_tag)}.*?{re.escape(fin_tag)}", re.DOTALL)
-            nuevo_contenido = patron.sub(nuevo_bloque, contenido)
-        else:
-            # SI NO EXISTEN: Las pegamos al final
-            print("⚠️ Etiquetas no encontradas. Inyectando al final del archivo...")
-            nuevo_contenido = contenido + "\n\n## 🚦 Estado del Oráculo\n" + nuevo_bloque
-
-        with open(archivo_path, "w", encoding="utf-8") as f:
-            f.write(nuevo_contenido)
-        print("✅ README actualizado con éxito.")
-
+        with open("README.md", "w", encoding="utf-8") as f:
+            f.write(contenido_nuevo)
+        print("✅ README reconstruido desde cero con éxito.")
     except Exception as e:
-        print(f"⚠️ Error en README: {e}")
+        print(f"❌ Error escribiendo: {e}")
         
 # Guardar en CSV (opcional)
 try:
