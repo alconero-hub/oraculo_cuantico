@@ -53,7 +53,7 @@ def ejecutar_oraculo():
         cambios = precios.pct_change().dropna().tail(8).values
         vol = np.mean(np.abs(cambios)) * 100
         
-        if vol < 0.25:
+        if vol < 0.20:
             print(f"😴 Baja volatilidad ({vol:.4f}%).")
             return 0.0, ultimo_p, vol, f"Standby ({backend.name})"
         
