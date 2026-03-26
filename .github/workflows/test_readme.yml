@@ -1,0 +1,74 @@
+name: 🧪 Test de Actualización README
+
+on:
+  workflow_dispatch: # Esto permite que lo lances con el botón "Run workflow"
+
+jobs:
+  test-readme:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Crucial para que el bot pueda escribir en el repo
+
+    steps:
+      - name: 📥 Checkout del repositorio
+        uses: actions/checkout@v4
+
+      - name: 🐍 Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📝 Crear y Ejecutar Script de Test
+        run: |
+          # Creamos un pequeño script de Python sobre la marcha
+          cat << 'EOF' > test_script.py
+          import os
+          from datetime import datetime
+
+          def test_update():
+              archivo = "README.md"
+              inicio = ""
+              fin = ""
+              
+              if not os.path.exists(archivo):
+                  print("❌ No se encuentra el README.md")
+                  return
+
+              with open(archivo, "r", encoding="utf-8") as f:
+                  contenido = f.read()
+
+              if inicio in contenido and fin in contenido:
+                  parte_pre = contenido.split(inicio)[0]
+                  parte_post = contenido.split(fin)[1]
+                  
+                  # Texto de prueba que queremos ver
+                  nuevo_texto = (
+                      f"{inicio}\n"
+                      f"> **Última Señal:** 🧪 **TEST DE ESCRITURA EXITOSO**\n"
+                      f"> **Estado:** El bot puede escribir entre las marcas.\n"
+                      f"> **Fecha Test:** {datetime.now().strftime('%Y-%m-%d %H:%M')} UTC\n"
+                      f"{fin}"
+                  )
+                  
+                  with open(archivo, "w", encoding="utf-8") as f:
+                      f.write(f"{parte_pre}{nuevo_texto}{parte_post}")
+                  print("✅ README.md modificado localmente.")
+              else:
+                  print("❌ Error: No se encontraron las marcas ")
+
+          if __name__ == "__main__":
+              test_update()
+          EOF
+          
+          # Ejecutamos el script que acabamos de crear
+          python test_script.py
+
+      - name: 💾 Subir cambios al repositorio
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name 'GitHub Action Test'
+          git config --global user.email 'test@github.com'
+          git add README.md
+          git commit -m "🧪 Test: Verificación de etiquetas del README" || echo "Sin cambios"
+          git push origin main
