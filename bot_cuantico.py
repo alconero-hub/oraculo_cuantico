@@ -59,7 +59,7 @@ except Exception as e:
 
 # --- 3. FUNCIÓN DE ACTUALIZACIÓN (SISTEMA REGEX ANTI-DUPLICADOS) ---
 def actualizar_readme(res, precio, vol, b_name):
-    # Lógica de semáforo
+    # Definición de semáforo
     if vol < 0.01: 
         semaforo = "⚪ **DORMIDO**"
     elif res > 0.15: 
@@ -75,50 +75,37 @@ def actualizar_readme(res, precio, vol, b_name):
 
     try:
         if not os.path.exists(archivo_path):
-            print("❌ No existe el README.md")
-            return
+            with open(archivo_path, "w") as f: f.write("# Oráculo BTC\n" + inicio_tag + "\n" + fin_tag)
 
         with open(archivo_path, "r", encoding="utf-8") as f:
-            lineas = f.readlines()
+            contenido = f.read()
 
-        nueva_lista_lineas = []
-        dentro_de_sector = False
-        sector_escrito = False
+        # BLOQUE NUEVO
+        nuevo_bloque = (
+            f"{inicio_tag}\n"
+            f"> **Última Señal:** {semaforo} | **Precio:** ${precio:,.2f}\n"
+            f"> **Veredicto:** {res:+.4f} | **Hardware:** {b_name}\n"
+            f"> **Actualizado:** {datetime.now().strftime('%H:%M:%S')} UTC\n"
+            f"{fin_tag}"
+        )
 
-        for linea in lineas:
-            # Si encontramos el inicio, activamos el modo 'borrado'
-            if inicio_tag in linea:
-                dentro_de_sector = True
-                # Escribimos el bloque nuevo una sola vez
-                nueva_lista_lineas.append(f"{inicio_tag}\n")
-                nueva_lista_lineas.append(f"> **Última Señal:** {semaforo} | **Precio:** ${precio:,.2f}\n")
-                nueva_lista_lineas.append(f"> **Veredicto:** {res:+.4f} | **Hardware:** {b_name}\n")
-                nueva_lista_lineas.append(f"{fin_tag}\n")
-                sector_escrito = True
-                continue
-            
-            # Si encontramos el fin, desactivamos el modo borrado
-            if fin_tag in linea:
-                dentro_de_sector = False
-                continue
+        # SI EXISTEN LAS ETIQUETAS: Reemplazo Quirúrgico
+        if inicio_tag in contenido and fin_tag in contenido:
+            import re
+            patron = re.compile(f"{re.escape(inicio_tag)}.*?{re.escape(fin_tag)}", re.DOTALL)
+            nuevo_contenido = patron.sub(nuevo_bloque, contenido)
+        else:
+            # SI NO EXISTEN: Las pegamos al final
+            print("⚠️ Etiquetas no encontradas. Inyectando al final del archivo...")
+            nuevo_contenido = contenido + "\n\n## 🚦 Estado del Oráculo\n" + nuevo_bloque
 
-            # Si no estamos dentro del sector de datos, mantenemos la línea original
-            if not dentro_de_sector:
-                nueva_lista_lineas.append(linea)
-
-        # Si por alguna razón no existían las etiquetas, las añadimos al final (seguridad)
-        if not sector_escrito:
-            nueva_lista_lineas.append(f"\n{inicio_tag}\n> **Señal:** {semaforo}\n{fin_tag}\n")
-
-        # Guardar el archivo limpio
         with open(archivo_path, "w", encoding="utf-8") as f:
-            f.writelines(nueva_lista_lineas)
-            
-        print("✅ README saneado y actualizado sin duplicados.")
+            f.write(nuevo_contenido)
+        print("✅ README actualizado con éxito.")
 
     except Exception as e:
-        print(f"⚠️ Error crítico en README: {e}")
-
+        print(f"⚠️ Error en README: {e}")
+        
 # Guardar en CSV (opcional)
 try:
     archivo_csv = 'backtest_cuantico.csv'
