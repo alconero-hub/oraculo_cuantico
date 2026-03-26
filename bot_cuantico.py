@@ -76,20 +76,20 @@ except Exception as e:
 
 # --- 3. ACTUALIZAR README (Semáforo Dinámico) ---
 def actualizar_readme(res, precio, vol, b_name):
-    # Definición de iconos del semáforo
+    # Definición del semáforo
     if vol < umbral_minimo:
         semaforo = "⚪ **DORMIDO** (Mercado Lateral)"
     elif res > 0.15: 
-        semaforo = "🟢 **COMPRA** (Señal Alcista Fuerte)"
+        semaforo = "🟢 **COMPRA** (Señal Alcista)"
     elif res < -0.15: 
-        semaforo = "🔴 **VENTA** (Señal Bajista Fuerte)"
+        semaforo = "🔴 **VENTA** (Señal Bajista)"
     else: 
-        semaforo = "🟡 **ESPERA** (Incertidumbre/Ruido)"
+        semaforo = "🟡 **ESPERA** (Neutral)"
 
     try:
         archivo_path = "README.md"
         if not os.path.exists(archivo_path):
-            print("⚠️ README.md no encontrado para actualizar.")
+            print("❌ El archivo README.md no existe.")
             return
 
         with open(archivo_path, "r", encoding="utf-8") as f:
@@ -98,31 +98,34 @@ def actualizar_readme(res, precio, vol, b_name):
         inicio_marca = ""
         fin_marca = ""
         
-        # Construimos el nuevo bloque de información
-        nuevo_bloque = (
+        # VALIDACIÓN ANTICIPADA
+        if inicio_marca not in contenido or fin_marca not in contenido:
+            print("❌ ERROR: No se han encontrado las etiquetas invisibles en el README.")
+            print("Asegúrate de que el README contenga las marcas de inicio y fin.")
+            return # Salimos pacíficamente antes del error 'empty separator'
+
+        # RECONSTRUCCIÓN DEL BLOQUE
+        # Usamos una lista para las partes para evitar errores de split vacío
+        partes = contenido.split(inicio_marca)
+        parte_previa = partes[0]
+        parte_posterior = partes[1].split(fin_marca)[1]
+        
+        nuevo_informe = (
             f"{inicio_marca}\n"
             f"> **Última Señal:** {semaforo}\n"
             f"> **Precio BTC:** ${precio:,.2f}\n"
-            f"> **Veredicto Cuántico:** {res:+.4f}\n"
-            f"> **Volatilidad:** {vol:.4f}%\n"
-            f"> **Hardware:** {b_name}\n"
-            f"> **Actualizado:** {datetime.now().strftime('%Y-%m-%d %H:%M')} UTC\n"
+            f"> **Veredicto:** {res:+.4f} | **Vol:** {vol:.4f}%\n"
+            f"> **Hardware:** {b_name} | **Actualizado:** {datetime.now().strftime('%H:%M')} UTC\n"
             f"{fin_marca}"
         )
 
-        # Sustitución entre etiquetas
-        if inicio_marca in contenido and fin_marca in contenido:
-            parte_pre = contenido.split(inicio_marca)[0]
-            parte_post = contenido.split(fin_marca)[1]
-            
-            with open(archivo_path, "w", encoding="utf-8") as f:
-                f.write(f"{parte_pre}{nuevo_bloque}{parte_post}")
-            print("✅ README.md actualizado con la señal actual.")
-        else:
-            print("❌ No se encontraron las marcas de comentario en el README.")
+        with open(archivo_path, "w", encoding="utf-8") as f:
+            f.write(f"{parte_previa}{nuevo_informe}{parte_posterior}")
+        
+        print("✅ README actualizado con éxito.")
 
     except Exception as e:
-        print(f"⚠️ Error al escribir en README: {e}")
+        print(f"⚠️ Error detectado en la escritura: {e}")
 
 # --- 4. GUARDADO FORZOSO DEL CSV ---
 archivo = 'backtest_cuantico.csv'
