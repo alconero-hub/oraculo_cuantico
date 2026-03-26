@@ -32,8 +32,10 @@ Si quieres clonar este oráculo:
 ## ⚠️ Descargo de Responsabilidad
 Este proyecto es **estrictamente educativo y experimental**. La computación cuántica en el sector financiero está en fase de investigación. No constituye asesoramiento financiero. El "ruido" de los procesadores actuales puede afectar los veredictos.
 
+
 ## 🚦 Estado del Oráculo
-Esperando primera ejecución...
+> **Última Señal:** ⏳ Esperando datos del hardware real...
+
 ## 📈 Rendimiento Histórico
 ![Gráfica](./rendimiento_cuantico.png)
 
