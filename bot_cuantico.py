@@ -59,29 +59,25 @@ except Exception as e:
 
 # --- 3. FUNCIÓN DE ACTUALIZACIÓN (SISTEMA REGEX ANTI-DUPLICADOS) ---
 def actualizar_readme(res, precio, vol, b_name):
-    # Lógica de semáforo visual
+    # 1. Definir el texto del semáforo
     if vol < 0.01: 
-        semaforo = "⚪ **DORMIDO** (Mercado Lateral)"
+        semaforo = "⚪ **DORMIDO**"
     elif res > 0.15: 
-        semaforo = "🟢 **COMPRA** (Señal Alcista)"
+        semaforo = "🟢 **COMPRA**"
     elif res < -0.15: 
-        semaforo = "🔴 **VENTA** (Señal Bajista)"
+        semaforo = "🔴 **VENTA**"
     else: 
-        semaforo = "🟡 **ESPERA** (Neutralidad)"
+        semaforo = "🟡 **ESPERA**"
+
+    archivo_path = "README.md"
+    inicio = ""
+    fin = ""
 
     try:
-        archivo_path = "README.md"
-        if not os.path.exists(archivo_path):
-            print("⚠️ No existe README.md")
-            return
-
         with open(archivo_path, "r", encoding="utf-8") as f:
             contenido = f.read()
 
-        inicio = ""
-        fin = ""
-
-        # Construcción del nuevo informe
+        # 2. El bloque limpio que queremos que quede
         nuevo_bloque = (
             f"{inicio}\n"
             f"> **Última Señal:** {semaforo}\n"
@@ -90,22 +86,25 @@ def actualizar_readme(res, precio, vol, b_name):
             f"{fin}"
         )
 
-        # Usamos Regex para buscar desde el primer INICIO hasta el último FIN y reemplazarlo todo
-        patron = re.compile(f"{re.escape(inicio)}.*?{re.escape(fin)}", re.DOTALL)
-
-        if patron.search(contenido):
-            nuevo_contenido = patron.sub(nuevo_bloque, contenido)
+        # 3. Lógica de Reemplazo Total (Evita duplicados)
+        if inicio in contenido and fin in contenido:
+            # Dividimos el archivo en 3 partes usando las marcas
+            # Tomamos la parte ANTES del primer 'inicio'
+            parte_limpia_pre = contenido.split(inicio)[0]
+            # Tomamos la parte DESPUÉS del último 'fin'
+            parte_limpia_post = contenido.split(fin)[-1]
+            
+            # Reconstruimos el archivo ignorando cualquier basura que hubiera en medio
+            nuevo_contenido = f"{parte_limpia_pre.strip()}\n\n{nuevo_bloque}\n\n{parte_limpia_post.strip()}"
+            
             with open(archivo_path, "w", encoding="utf-8") as f:
                 f.write(nuevo_contenido)
-            print("✅ README actualizado y saneado.")
+            print("✅ README saneado: Se eliminaron duplicados y se escribió la nueva señal.")
         else:
-            print("❌ No se encontraron las marcas en el README.")
+            print("❌ Error: No se encontraron las marcas. Revisa el paso 1.")
 
     except Exception as e:
-        print(f"⚠️ Error escribiendo en README: {e}")
-
-# --- 4. GUARDADO Y EJECUCIÓN ---
-actualizar_readme(resultado, ultimo_p, volatilidad, status_backend)
+        print(f"⚠️ Error en actualización: {e}")
 
 # Guardar en CSV (opcional)
 try:
