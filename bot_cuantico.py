@@ -59,7 +59,7 @@ except Exception as e:
 
 # --- 3. FUNCIÓN DE ACTUALIZACIÓN (SISTEMA REGEX ANTI-DUPLICADOS) ---
 def actualizar_readme(res, precio, vol, b_name):
-    # 1. Definir el texto del semáforo
+    # Lógica de semáforo
     if vol < 0.01: 
         semaforo = "⚪ **DORMIDO**"
     elif res > 0.15: 
@@ -70,41 +70,54 @@ def actualizar_readme(res, precio, vol, b_name):
         semaforo = "🟡 **ESPERA**"
 
     archivo_path = "README.md"
-    inicio = ""
-    fin = ""
+    inicio_tag = ""
+    fin_tag = ""
 
     try:
+        if not os.path.exists(archivo_path):
+            print("❌ No existe el README.md")
+            return
+
         with open(archivo_path, "r", encoding="utf-8") as f:
-            contenido = f.read()
+            lineas = f.readlines()
 
-        # 2. El bloque limpio que queremos que quede
-        nuevo_bloque = (
-            f"{inicio}\n"
-            f"> **Última Señal:** {semaforo}\n"
-            f"> **Precio BTC:** ${precio:,.2f} | **Veredicto:** {res:+.4f}\n"
-            f"> **Hardware:** {b_name} | **Actualizado:** {datetime.now().strftime('%H:%M')} UTC\n"
-            f"{fin}"
-        )
+        nueva_lista_lineas = []
+        dentro_de_sector = False
+        sector_escrito = False
 
-        # 3. Lógica de Reemplazo Total (Evita duplicados)
-        if inicio in contenido and fin in contenido:
-            # Dividimos el archivo en 3 partes usando las marcas
-            # Tomamos la parte ANTES del primer 'inicio'
-            parte_limpia_pre = contenido.split(inicio)[0]
-            # Tomamos la parte DESPUÉS del último 'fin'
-            parte_limpia_post = contenido.split(fin)[-1]
+        for linea in lineas:
+            # Si encontramos el inicio, activamos el modo 'borrado'
+            if inicio_tag in linea:
+                dentro_de_sector = True
+                # Escribimos el bloque nuevo una sola vez
+                nueva_lista_lineas.append(f"{inicio_tag}\n")
+                nueva_lista_lineas.append(f"> **Última Señal:** {semaforo} | **Precio:** ${precio:,.2f}\n")
+                nueva_lista_lineas.append(f"> **Veredicto:** {res:+.4f} | **Hardware:** {b_name}\n")
+                nueva_lista_lineas.append(f"{fin_tag}\n")
+                sector_escrito = True
+                continue
             
-            # Reconstruimos el archivo ignorando cualquier basura que hubiera en medio
-            nuevo_contenido = f"{parte_limpia_pre.strip()}\n\n{nuevo_bloque}\n\n{parte_limpia_post.strip()}"
+            # Si encontramos el fin, desactivamos el modo borrado
+            if fin_tag in linea:
+                dentro_de_sector = False
+                continue
+
+            # Si no estamos dentro del sector de datos, mantenemos la línea original
+            if not dentro_de_sector:
+                nueva_lista_lineas.append(linea)
+
+        # Si por alguna razón no existían las etiquetas, las añadimos al final (seguridad)
+        if not sector_escrito:
+            nueva_lista_lineas.append(f"\n{inicio_tag}\n> **Señal:** {semaforo}\n{fin_tag}\n")
+
+        # Guardar el archivo limpio
+        with open(archivo_path, "w", encoding="utf-8") as f:
+            f.writelines(nueva_lista_lineas)
             
-            with open(archivo_path, "w", encoding="utf-8") as f:
-                f.write(nuevo_contenido)
-            print("✅ README saneado: Se eliminaron duplicados y se escribió la nueva señal.")
-        else:
-            print("❌ Error: No se encontraron las marcas. Revisa el paso 1.")
+        print("✅ README saneado y actualizado sin duplicados.")
 
     except Exception as e:
-        print(f"⚠️ Error en actualización: {e}")
+        print(f"⚠️ Error crítico en README: {e}")
 
 # Guardar en CSV (opcional)
 try:
