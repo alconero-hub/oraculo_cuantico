@@ -77,8 +77,8 @@ except Exception as e:
 
 # --- 3. ACTUALIZAR README (Semáforo Dinámico) ---
 def actualizar_readme(res, precio, vol, b_name):
-    # Lógica de semáforo (igual que antes)
-    if vol < 0.01: # umbral_minimo
+    # Lógica de semáforo
+    if vol < 0.01: 
         semaforo = "⚪ **DORMIDO**"
     elif res > 0.15: 
         semaforo = "🟢 **COMPRA**"
@@ -87,39 +87,37 @@ def actualizar_readme(res, precio, vol, b_name):
     else: 
         semaforo = "🟡 **ESPERA**"
 
+    archivo_path = "README.md"
+    
     try:
-        archivo_path = "README.md"
         with open(archivo_path, "r", encoding="utf-8") as f:
             contenido = f.read()
 
-        # Definimos las marcas exactas
         inicio = ""
         fin = ""
 
-        # Creamos el nuevo bloque de texto
-        nuevo_texto = (
+        # El nuevo bloque que queremos insertar
+        nuevo_bloque = (
             f"{inicio}\n"
-            f"> **Última Señal:** {semaforo}\n"
-            f"> **Precio BTC:** ${precio:,.2f}\n"
-            f"> **Veredicto:** {res:+.4f} | **Hardware:** {b_name}\n"
+            f"> **Última Señal:** {semaforo} Precio BTC: ${precio:,.2f} Veredicto: {res:+.4f} | Hardware: {b_name}\n"
             f"{fin}"
         )
 
-        # USAMOS REGEX: Busca todo lo que haya entre las marcas y lo reemplaza
-        # El patrón r'.*?' 
-        # encuentra las marcas y lo que hay en medio, incluso si hay saltos de línea.
+        # Buscamos el patrón desde la primera marca hasta la última
+        # Esto evita que se dupliquen las líneas
         patron = re.compile(f"{re.escape(inicio)}.*?{re.escape(fin)}", re.DOTALL)
-        
+
         if patron.search(contenido):
-            nuevo_contenido = patron.sub(nuevo_texto, contenido)
+            # Reemplazamos todo el bloque antiguo por el nuevo
+            nuevo_contenido = patron.sub(nuevo_bloque, contenido)
             with open(archivo_path, "w", encoding="utf-8") as f:
                 f.write(nuevo_contenido)
-            print("✅ README actualizado con Regex (Sin errores de split).")
+            print("✅ README saneado y actualizado.")
         else:
-            print("❌ No se encontró el bloque de marcas en el README.")
+            print("❌ No encontré las marcas. No he escrito nada para no duplicar.")
 
     except Exception as e:
-        print(f"⚠️ Error detectado en la escritura: {e}")
+        print(f"⚠️ Error en limpieza: {e}")
 
 # --- 4. GUARDADO FORZOSO DEL CSV ---
 archivo = 'backtest_cuantico.csv'
