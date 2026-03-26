@@ -43,7 +43,7 @@ def ejecutar_oraculo():
         vol = np.mean(np.abs(cambios)) * 100
         
         # Umbral para evitar ruido en mercado muerto
-        umbral_minimo = 0.25 
+        umbral_minimo = 0.20 
 
         if vol < umbral_minimo:
             print(f"😴 Mercado lateral ({vol:.4f}%). Saltando QPU para ahorrar cuota.")
