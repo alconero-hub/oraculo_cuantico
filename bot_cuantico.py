@@ -68,7 +68,7 @@ try:
         # Mapeo de datos a ángulos cuánticos
         adn = [np.arctan(float(x) * 100) for x in cambios]
         # Ejecución en IBM y conversión segura a float
-        resultado = float(np.array(oraculo_cuantico(adn)).item())
+        #resultado = float(np.array(oraculo_cuantico(adn)).item())
         status_backend = backend.name
 
 except Exception as e:
