@@ -5,6 +5,7 @@ import numpy as np
 from datetime import datetime
 from qiskit_ibm_runtime import QiskitRuntimeService
 import pennylane as qml
+import re
 
 # --- 1. CONFIGURACIÓN Y CONEXIÓN ---
 token = os.getenv("IBM_QUANTUM_TOKEN")
@@ -76,53 +77,46 @@ except Exception as e:
 
 # --- 3. ACTUALIZAR README (Semáforo Dinámico) ---
 def actualizar_readme(res, precio, vol, b_name):
-    # Definición del semáforo
-    if vol < umbral_minimo:
-        semaforo = "⚪ **DORMIDO** (Mercado Lateral)"
+    # Lógica de semáforo (igual que antes)
+    if vol < 0.01: # umbral_minimo
+        semaforo = "⚪ **DORMIDO**"
     elif res > 0.15: 
-        semaforo = "🟢 **COMPRA** (Señal Alcista)"
+        semaforo = "🟢 **COMPRA**"
     elif res < -0.15: 
-        semaforo = "🔴 **VENTA** (Señal Bajista)"
+        semaforo = "🔴 **VENTA**"
     else: 
-        semaforo = "🟡 **ESPERA** (Neutral)"
+        semaforo = "🟡 **ESPERA**"
 
     try:
         archivo_path = "README.md"
-        if not os.path.exists(archivo_path):
-            print("❌ El archivo README.md no existe.")
-            return
-
         with open(archivo_path, "r", encoding="utf-8") as f:
             contenido = f.read()
-        
-        inicio_marca = ""
-        fin_marca = ""
-        
-        # VALIDACIÓN ANTICIPADA
-        if inicio_marca not in contenido or fin_marca not in contenido:
-            print("❌ ERROR: No se han encontrado las etiquetas invisibles en el README.")
-            print("Asegúrate de que el README contenga las marcas de inicio y fin.")
-            return # Salimos pacíficamente antes del error 'empty separator'
 
-        # RECONSTRUCCIÓN DEL BLOQUE
-        # Usamos una lista para las partes para evitar errores de split vacío
-        partes = contenido.split(inicio_marca)
-        parte_previa = partes[0]
-        parte_posterior = partes[1].split(fin_marca)[1]
-        
-        nuevo_informe = (
-            f"{inicio_marca}\n"
+        # Definimos las marcas exactas
+        inicio = ""
+        fin = ""
+
+        # Creamos el nuevo bloque de texto
+        nuevo_texto = (
+            f"{inicio}\n"
             f"> **Última Señal:** {semaforo}\n"
             f"> **Precio BTC:** ${precio:,.2f}\n"
-            f"> **Veredicto:** {res:+.4f} | **Vol:** {vol:.4f}%\n"
-            f"> **Hardware:** {b_name} | **Actualizado:** {datetime.now().strftime('%H:%M')} UTC\n"
-            f"{fin_marca}"
+            f"> **Veredicto:** {res:+.4f} | **Hardware:** {b_name}\n"
+            f"{fin}"
         )
 
-        with open(archivo_path, "w", encoding="utf-8") as f:
-            f.write(f"{parte_previa}{nuevo_informe}{parte_posterior}")
+        # USAMOS REGEX: Busca todo lo que haya entre las marcas y lo reemplaza
+        # El patrón r'.*?' 
+        # encuentra las marcas y lo que hay en medio, incluso si hay saltos de línea.
+        patron = re.compile(f"{re.escape(inicio)}.*?{re.escape(fin)}", re.DOTALL)
         
-        print("✅ README actualizado con éxito.")
+        if patron.search(contenido):
+            nuevo_contenido = patron.sub(nuevo_texto, contenido)
+            with open(archivo_path, "w", encoding="utf-8") as f:
+                f.write(nuevo_contenido)
+            print("✅ README actualizado con Regex (Sin errores de split).")
+        else:
+            print("❌ No se encontró el bloque de marcas en el README.")
 
     except Exception as e:
         print(f"⚠️ Error detectado en la escritura: {e}")
