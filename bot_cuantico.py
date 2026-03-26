@@ -59,57 +59,57 @@ except Exception as e:
 
 # --- 3. FUNCIÓN DE ACTUALIZACIÓN (SISTEMA REGEX ANTI-DUPLICADOS) ---
 def actualizar_readme(res, precio, vol, b_name):
-    # --- TÁCTICA DE DECISIÓN EXTREMA ---
+    # --- LÓGICA DE SEÑALES FUERTES ---
     if vol < 0.01:
-        estado = "⚪ **MERCADO DORMIDO** (Baja Volatilidad)"
-        color_box = "blue"
-    elif res > 0.60: # Veredicto muy positivo
-        estado = "🚀 **COMPRA FUERTE** (Señal Cuántica Máxima)"
-        color_box = "green"
+        estado = "⚪ **MERCADO LATERAL**"
+        color = "grey"
+    elif res > 0.60:
+        estado = "🚀 **COMPRA FUERTE**"
+        color = "brightgreen"
     elif res > 0.15:
-        estado = "🟢 **COMPRA MODERADA**"
-        color_box = "green"
-    elif res < -0.60: # Veredicto muy negativo
-        estado = "💀 **VENTA FUERTE** (Alerta de Caída)"
-        color_box = "red"
+        estado = "🟢 **COMPRA**"
+        color = "green"
+    elif res < -0.60:
+        estado = "💀 **VENTA FUERTE**"
+        color = "red"
     elif res < -0.15:
-        estado = "🔴 **VENTA MODERADA**"
-        color_box = "red"
+        estado = "🔴 **VENTA**"
+        color = "orange"
     else:
-        estado = "🟡 **ESPERA** (Neutralidad)"
-        color_box = "yellow"
+        estado = "🟡 **ESPERA**"
+        color = "yellow"
 
-    # --- TÁCTICA DE ESCRITURA TOTAL ---
-    # No buscamos etiquetas, escribimos el archivo entero cada vez
-    contenido_nuevo = f"""# 🌌 Oráculo Cuántico BTC
+    # --- RECONSTRUCCIÓN TOTAL DEL README ---
+    # Al usar "w", borramos cualquier rastro de duplicados anteriores.
+    contenido = f"""# 🌌 Oráculo Cuántico BTC
 
-![Estado](https://img.shields.io/badge/ORÁCULO-{estado.replace(' ', '%20')}-{color_box}?style=for-the-badge)
+![Señal](https://img.shields.io/badge/VEREDICTO-{estado.replace('*', '').replace(' ', '%20')}-{color}?style=for-the-badge)
 
-### 🚦 Veredicto Actual
+## 🚦 Estado del Oráculo
 > # {estado}
 
-**Detalles Técnicos:**
-* **Precio Actual:** ${precio:,.2f}
-* **Poder Cuántico (Veredicto):** {res:+.4f}
+### 📊 Detalles de la Operación
+* **Precio Entrada:** ${precio:,.2f}
+* **Veredicto Cuántico:** {res:+.4f} (Confianza del Oráculo)
 * **Volatilidad:** {vol:.4f}%
-* **Procesador:** {b_name}
-* **Última Actualización:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} UTC
+* **Hardware:** {b_name}
+* **Última actualización:** {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} UTC
 
 ---
 
-### 📈 Gráfica de Rendimiento
+## 📈 Gráfica de Rendimiento
 ![Gráfica](./rendimiento_cuantico.png)
 
 ---
-*Aviso: Este sistema utiliza entrelazamiento de qubits en hardware real de IBM. No es consejo financiero.*
+*Aviso: Este sistema procesa datos en una QPU real de IBM mediante entrelazamiento. No es consejo financiero.*
 """
 
     try:
         with open("README.md", "w", encoding="utf-8") as f:
-            f.write(contenido_nuevo)
-        print("✅ README reconstruido desde cero con éxito.")
+            f.write(contenido)
+        print(f"✅ README actualizado con señal: {estado}")
     except Exception as e:
-        print(f"❌ Error escribiendo: {e}")
+        print(f"❌ Error al escribir README: {e}")
         
 # Guardar en CSV (opcional)
 try:
