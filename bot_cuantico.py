@@ -41,7 +41,7 @@ try:
     cambios = precios.pct_change().dropna().tail(4).values
     volatilidad = np.mean(np.abs(cambios)) * 100
     
-    umbral_minimo = 0.30 
+    umbral_minimo = 0.20 
 
     if volatilidad < umbral_minimo:
         print(f"😴 Mercado lateral ({volatilidad:.4f}%).")
