@@ -6,12 +6,12 @@
 > # ⏳ 🟡 **ESPERA**
 
 ### 📊 Análisis Técnico Cuántico
-* **Precio BTC:** `$68,943.38`
+* **Precio BTC:** `$69,007.86`
 * **Confianza (Q-Score):** `+0.0000`
-* **Volatilidad:** `0.1731%`
-* **Hardware:** `Standby (ibm_marrakesh)` (Arquitectura de 8 Cúbits)
+* **Volatilidad:** `0.0887%`
+* **Hardware:** `Standby (ibm_torino)` (Arquitectura de 8 Cúbits)
 * **Ventana Temporal:** `120 min (8x15m)`
-* **Actualización:** `2026-03-26 15:38:37 UTC`
+* **Actualización:** `2026-03-26 17:41:49 UTC`
 
 ---
 
