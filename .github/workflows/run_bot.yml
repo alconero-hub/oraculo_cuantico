@@ -24,17 +24,13 @@ jobs:
           python bot_cuantico.py
           python graficar_rendimiento.py
           ls -la # Verificamos que los archivos existan
-      - name: 🚀 Push de Resultados
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: 🚀 Publicar Resultados
         run: |
           git config --global user.name 'Quantum Bot'
           git config --global user.email 'bot@quantum.com'
-          # El parámetro --force o añadir archivos uno a uno con || true evita que falle
-          git add README.md || echo "README no encontrado"
-          git add backtest_cuantico.csv || echo "CSV no encontrado"
-          git add rendimiento_cuantico.png || echo "Imagen no encontrada"
-          
+          git add README.md backtest_cuantico.csv rendimiento_cuantico.png
+          git commit -m "📊 Veredicto: $(date)" || echo "Sin cambios"
+          git push origin main
           # Solo hace commit si hay cambios reales para evitar bucles
           git commit -m "📊 Update: Oráculo Cuántico [$(date +'%Y-%m-%d %H:%M')]" || echo "Sin cambios para commitear"
           
