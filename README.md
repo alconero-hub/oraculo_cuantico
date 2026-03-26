@@ -23,7 +23,8 @@ Los datos se guardan automáticamente en el archivo [backtest_cuantico.csv](./ba
 | **Activo** | BTC-USD |
 
 ## 🚦 Estado del Oráculo
-> **Última Señal:** ⏳ Analizando datos...
+
+> **Última Señal:** ⏳ Analizando datos cuánticos...
 ## 📈 Rendimiento Histórico
 ![Gráfica](./rendimiento_cuantico.png)
 
