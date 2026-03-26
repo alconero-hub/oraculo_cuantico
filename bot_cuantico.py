@@ -57,7 +57,7 @@ try:
     
     # Filtro de Volatilidad (Ahorro de QPU)
     volatilidad = np.mean(np.abs(cambios)) * 100
-    umbral_minimo = 0.02 # 0.02% de movimiento mínimo
+    umbral_minimo = 0.20 # 0.02% de movimiento mínimo
 
     if volatilidad < umbral_minimo:
         print(f"😴 Mercado muy plano ({volatilidad:.4f}%). Veredicto 0.0.")
@@ -141,5 +141,5 @@ else:
     nueva_fila.to_csv(archivo, index=False)
 
 # Llamamos a la actualización del README antes de terminar
-actualizar_readme(resultado, ultimo_p, volatilidad)
+actualizar_readme(resultado, ultimo_p, volatilidad, status_backend)
 print(f"🚀 Proceso completado. Veredicto final: {resultado:+.4f}")
