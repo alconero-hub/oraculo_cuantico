@@ -7,7 +7,7 @@ def generar_grafica():
     if not os.path.exists(archivo): return
 
     df = pd.read_csv(archivo)
-   df['Fecha'] = pd.to_datetime(df['Fecha'], format='mixed')
+    df['Fecha'] = pd.to_datetime(df['Fecha'], format='mixed')
     df = df.sort_values('Fecha').tail(50) 
 
     fig, ax1 = plt.subplots(figsize=(12, 6))
