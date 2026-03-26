@@ -39,5 +39,16 @@ Este proyecto es **estrictamente educativo y experimental**. La computación cu�
 ## 📈 Rendimiento Histórico
 ![Gráfica](./rendimiento_cuantico.png)
 
+# 🌌 Oráculo Cuántico BTC
+
+![Estado](https://github.com/TU_USUARIO/TU_REPO/actions/workflows/run_bot.yml/badge.svg)
+
+## 🚦 Estado del Oráculo
+> **Última Señal:** ⏳ Analizando el mercado...
+## 📈 Rendimiento Histórico
+![Gráfica](./rendimiento_cuantico.png)
+
+---
+*Powered by IBM Quantum Platform & PennyLane*
 ---
 *Desarrollado con ❤️ y partículas entrelazadas.*
