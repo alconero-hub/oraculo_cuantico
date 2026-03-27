@@ -1,38 +1,43 @@
-name: Oráculo Cuántico 2026
+name: Oráculo Cuántico 16-Qubits
 
 on:
   schedule:
-    - cron: '5 */2 * * *'
+    - cron: '0 */2 * * *'
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
-  run-bot:
+  build:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout Código
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-      - name: Instalación
-        run: pip install qiskit qiskit-ibm-runtime pennylane pennylane-qiskit yfinance pandas numpy matplotlib
-      - name: Ejecución
+
+      - name: Instalar Dependencias
+        run: |
+          pip install yfinance pandas numpy matplotlib pennylane pennylane-qiskit qiskit-ibm-runtime
+
+      - name: Ejecutar Bot
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
+        run: python bot_cuantico.py
+
+      - name: Generar Gráfica
+        run: python graficar_rendimiento.py || echo "No se pudo generar la gráfica"
+
+      - name: Publicar Resultados
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          python bot_cuantico.py
-          python graficar_rendimiento.py
-          ls -la # Verificamos que los archivos existan
-      - name: 🚀 Publicar Resultados
-        run: |
-          git config --global user.name 'Quantum Bot'
+          git config --global user.name 'Quantum Bot 16Q'
           git config --global user.email 'bot@quantum.com'
-          git add README.md backtest_cuantico.csv rendimiento_cuantico.png
-          git commit -m "📊 Veredicto: $(date)" || echo "Sin cambios"
-          git push origin main
-          # Solo hace commit si hay cambios reales para evitar bucles
-          git commit -m "📊 Update: Oráculo Cuántico [$(date +'%Y-%m-%d %H:%M')]" || echo "Sin cambios para commitear"
-          
-          # Push con reintento por si hay colisiones
+          git add README.md backtest_cuantico.csv rendimiento_cuantico.png pesos_cuanticos_16.npy || true
+          git commit -m "🧠 Update 16Q: Aprendizaje y Veredicto [$(date)]" || echo "Sin cambios"
           git push origin main || (git pull --rebase origin main && git push origin main)
