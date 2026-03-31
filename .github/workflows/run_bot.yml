@@ -2,7 +2,7 @@ name: Oráculo Cuántico 128-Qubits
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Cada 6 horas
+    - cron: '0 */1 * * *' # Cada 6 horas
   workflow_dispatch:
 
 permissions:
