@@ -1,8 +1,8 @@
-name: Oráculo Cuántico 16-Qubits
+name: Oráculo Cuántico 32-Qubits
 
 on:
   schedule:
-    - cron: '5 */1 * * *'
+    - cron: '0 */2 * * *'
   workflow_dispatch:
 
 permissions:
@@ -30,14 +30,14 @@ jobs:
         run: python bot_cuantico.py
 
       - name: Generar Gráfica
-        run: python graficar_rendimiento.py || echo "No se pudo generar la gráfica"
+        run: python graficar_rendimiento.py || echo "Sin gráfica"
 
-      - name: Publicar Resultados
+      - name: Push 32Q
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name 'Quantum Bot 16Q'
+          git config --global user.name 'Quantum Bot 32Q'
           git config --global user.email 'bot@quantum.com'
-          git add README.md backtest_cuantico.csv rendimiento_cuantico.png pesos_cuanticos_16.npy || true
-          git commit -m "🧠 Update 16Q: Aprendizaje y Veredicto [$(date)]" || echo "Sin cambios"
+          git add README.md backtest_cuantico.csv rendimiento_cuantico.png pesos_cuanticos_32.npy || true
+          git commit -m "🧠 32-Qubit Synapse Update [$(date)]" || echo "No changes"
           git push origin main || (git pull --rebase origin main && git push origin main)
