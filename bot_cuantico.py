@@ -31,7 +31,7 @@ def ejecutar_oraculo():
         vol = np.mean(np.abs(cambios)) * 100
 
         # Filtro de Volatilidad (Ahorro de QPU)
-        if vol < 0.01:
+        if vol < 0.04:
             print(f"😴 Baja volatilidad ({vol:.4f}%). El oráculo sigue durmiendo.")
             return 0.0, ultimo_p, vol, "Standby (Filtro 0.04%)"
 
