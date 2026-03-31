@@ -45,7 +45,7 @@ def ejecutar_oraculo():
             # Intentamos buscar procesadores de 127 qubits o más (Eagle/Heron)
             backend = service.least_busy(operational=True, simulator=False, min_num_qubits=N_QUBITS)
             print(f"📡 Hardware: {backend.name}")
-            dev = qml.device('qiskit.remote', wires=N_QUBITS, backend=backend, shots=4096)
+            dev = qml.device('qiskit.remote', wires=N_QUBITS, backend=backend, shots=10000)
         except:
             print("⚠️ No hay QPU de 128Q disponible. Usando Simulador de Alta Densidad.")
             dev = qml.device('default.qubit', wires=N_QUBITS)
