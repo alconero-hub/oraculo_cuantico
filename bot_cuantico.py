@@ -32,7 +32,7 @@ def ejecutar_oraculo():
         vol = np.mean(np.abs(cambios)) * 100
 
         # --- FILTRO DE VOLATILIDAD ---
-        if vol < 0.30:
+        if vol < 0.10:
             print(f"😴 Mercado lateral ({vol:.4f}%). Saltando QPU para no gastar cuota.")
             return 0.0, ultimo_p, vol, "Standby (Baja Volatilidad)"
 
