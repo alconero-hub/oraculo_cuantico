@@ -10,7 +10,7 @@ def generar_grafica():
 
     # 1. Carga y limpieza de datos
     df = pd.read_csv('backtest_cuantico.csv')
-    df['Fecha'] = pd.to_datetime(df['Fecha'])
+    df['Fecha'] = pd.to_datetime(df['Fecha'], format='mixed')
     df = df.sort_values('Fecha').tail(100) # Mostramos los últimos 100 registros
 
     # 2. Configuración de estilo
