@@ -12,7 +12,7 @@ PESOS_FILE = "pesos_cuanticos_128.npy"
 N_QUBITS = 128
 N_SHOTS = 10000        # Precisión estadística del 1%
 LEARNING_RATE = 0.15   # Velocidad de adaptación de la memoria
-UMBRAL_VOL = 0.05      # Filtro de ruido para ahorrar cuota de QPU
+UMBRAL_VOL = 0.06      # Filtro de ruido para ahorrar cuota de QPU
 
 def gestionar_memoria(n_qubits=128):
     """Carga los pesos aprendidos o inicializa una nueva red neuronal."""
