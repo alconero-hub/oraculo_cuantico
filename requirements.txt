@@ -1,0 +1,5 @@
+pennylane==0.33.1
+autoray==0.6.7
+qiskit-ibm-runtime
+yfinance
+pandas
