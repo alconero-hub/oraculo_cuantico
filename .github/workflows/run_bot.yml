@@ -1,8 +1,8 @@
-name: Oráculo Cuántico 32-Qubits
+name: Oráculo Cuántico 128-Qubits
 
 on:
   schedule:
-    - cron: '3 */1 * * *'
+    - cron: '0 */6 * * *' # Cada 6 horas
   workflow_dispatch:
 
 permissions:
@@ -12,32 +12,31 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Código
+      - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Configurar Python
+      - name: Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
 
-      - name: Instalar Dependencias
-        run: |
-          pip install yfinance pandas numpy matplotlib pennylane pennylane-qiskit qiskit-ibm-runtime
+      - name: Deps
+        run: pip install yfinance pandas numpy matplotlib pennylane pennylane-qiskit qiskit-ibm-runtime
 
-      - name: Ejecutar Bot
+      - name: Run 128Q
         env:
           IBM_QUANTUM_TOKEN: ${{ secrets.IBM_QUANTUM_TOKEN }}
         run: python bot_cuantico.py
 
-      - name: Generar Gráfica
-        run: python graficar_rendimiento.py || echo "Sin gráfica"
+      - name: Plot
+        run: python graficar_rendimiento.py || echo "Plot error"
 
-      - name: Push 32Q
+      - name: Push results
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git config --global user.name 'Quantum Bot 32Q'
+          git config --global user.name 'Quantum Bot 128Q'
           git config --global user.email 'bot@quantum.com'
-          git add README.md backtest_cuantico.csv rendimiento_cuantico.png pesos_cuanticos_32.npy || true
-          git commit -m "🧠 32-Qubit Synapse Update [$(date)]" || echo "No changes"
+          git add README.md backtest_cuantico.csv rendimiento_cuantico.png pesos_cuanticos_128.npy || true
+          git commit -m "🧠 128-Qubit Master Learning [$(date)]" || echo "No changes"
           git push origin main || (git pull --rebase origin main && git push origin main)
