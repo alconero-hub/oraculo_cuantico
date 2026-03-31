@@ -2,7 +2,7 @@ name: Oráculo Cuántico 16-Qubits
 
 on:
   schedule:
-    - cron: '0 */2 * * *'
+    - cron: '5 */1 * * *'
   workflow_dispatch:
 
 permissions:
