@@ -40,3 +40,15 @@ jobs:
           git add README.md backtest_cuantico.csv rendimiento_cuantico.png pesos_cuanticos_128.npy || true
           git commit -m "🧠 128-Qubit Master Learning [$(date)]" || echo "No changes"
           git push origin main || (git pull --rebase origin main && git push origin main)
+
+      - name: Instalar Plotly
+        run: pip install plotly
+
+      - name: Generar Web
+        run: python generar_interactivo.py
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: . # Sube la raíz donde está el index.html
+          branch: gh-pages # Crea una rama especial para la web
