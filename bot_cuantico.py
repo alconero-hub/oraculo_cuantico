@@ -149,6 +149,30 @@ if __name__ == "__main__":
         res, p, v, b = resultado
         actualizar_readme(res, p, v, b)
         
+        # --- NUEVO REGISTRO DETALLADO EN CSV ---
+        nuevo_registro = {
+            'Fecha': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'Veredicto': res,             # El Q-Score (-1 a 1)
+            'Precio': p,                 # Precio actual de entrada
+            'Volatilidad': v,            # Volatilidad detectada
+            'Hardware': b,               # Nombre de la QPU o Simulador
+            'Shots': N_SHOTS,            # 10,000
+            'Qubits': N_QUBITS           # 128
+        }
+        
+        log_df = pd.DataFrame([nuevo_registro])
+        
+        file_path = 'backtest_cuantico.csv'
+        if os.path.exists(file_path):
+            # Cargamos el anterior y concatenamos
+            df_existente = pd.read_csv(file_path)
+            pd.concat([df_existente, log_df], ignore_index=True).to_csv(file_path, index=False)
+        else:
+            # Creamos el archivo con cabeceras por primera vez
+            log_df.to_csv(file_path, index=False)
+        
+        print(f"✅ CSV actualizado con éxito: Veredicto {res:.4f} a ${p:,.2f}")
+        
         # Registro en CSV para la gráfica histórica
         log = pd.DataFrame([{'Fecha': datetime.now(), 'Veredicto': res, 'Precio': p}])
         if os.path.exists('backtest_cuantico.csv'):
