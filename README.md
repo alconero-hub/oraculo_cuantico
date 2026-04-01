@@ -1,9 +1,9 @@
 # 🌌 Oráculo Cuántico 128Q
-![Señal](https://img.shields.io/badge/ORÁCULO-🟢%20COMPRA-green?style=for-the-badge)
-* **Precio:** `$68,120.25` | **Q-Score:** `+1.0607`
-* **Hardware:** `ibm_fez` | **Shots:** `10000`
-* **Volatilidad:** `0.2074%`
-* **Sync:** `2026-04-01 00:06:30 UTC`
+![Señal](https://img.shields.io/badge/ORÁCULO-💤%20LATERAL-lightgrey?style=for-the-badge)
+* **Precio:** `$68,809.38` | **Q-Score:** `+0.0000`
+* **Hardware:** `Standby (<0.3%)` | **Shots:** `10000`
+* **Volatilidad:** `0.2072%`
+* **Sync:** `2026-04-01 06:27:50 UTC`
 
 ---
 ![Gráfica](./rendimiento_cuantico.png)
