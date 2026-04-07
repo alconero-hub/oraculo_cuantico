@@ -13,7 +13,7 @@ CSV_FILE = "backtest_cuantico.csv"
 N_QUBITS = 128
 N_SHOTS = 10000
 LEARNING_RATE = 0.15
-UMBRAL_VOL = 0.25
+UMBRAL_VOL = 0.10
 
 def gestionar_memoria(n_qubits=128):
     if os.path.exists(PESOS_FILE):
