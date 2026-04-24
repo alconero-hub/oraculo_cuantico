@@ -13,7 +13,7 @@ PESOS_FILE = "pesos_cuanticos_128.npy"
 CSV_FILE = "backtest_cuantico.csv"
 N_QUBITS = 128
 N_SHOTS = 10000
-LEARNING_RATE = 0.15
+LEARNING_RATE = 0.08
 UMBRAL_VOL = 0.15  # El oráculo solo opera si hay movimiento real
 
 def gestionar_memoria(n_qubits=128):
