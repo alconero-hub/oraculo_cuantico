@@ -1,9 +1,9 @@
 # 🌌 Oráculo Cuántico 128Q
-![Señal](https://img.shields.io/badge/ORÁCULO-🟡%20ESPERA-yellow?style=for-the-badge)
-* **Precio BTC:** `$79,990.80` | **Q-Score:** `+0.0884`
-* **Hardware:** `ibm_fez` | **Shots:** `10000`
-* **Volatilidad Promedio:** `0.1693%`
-* **Última Sincronización:** `2026-05-04 19:53:42 UTC`
+![Señal](https://img.shields.io/badge/ORÁCULO-🟢%20COMPRA-green?style=for-the-badge)
+* **Precio BTC:** `$80,911.49` | **Q-Score:** `+0.4503`
+* **Hardware:** `ibm_marrakesh` | **Shots:** `10000`
+* **Volatilidad Promedio:** `0.1860%`
+* **Última Sincronización:** `2026-05-05 03:44:01 UTC`
 
 ---
 ### Análisis de Coherencia
