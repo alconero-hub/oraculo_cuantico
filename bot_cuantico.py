@@ -53,23 +53,39 @@ def obtener_umbral_adaptativo():
     return UMBRAL_BASE
 
 def cerrar_operaciones_pendientes(precio_actual):
-    if not os.path.exists(CSV_FILE): return
+    """Calcula el profit real basándose estrictamente en la decisión ejecutada."""
+    if not os.path.exists(CSV_FILE):
+        return
+    
     df = pd.read_csv(CSV_FILE)
-    if 'Resultado_60min' not in df.columns: df['Resultado_60min'] = np.nan
+    if 'Resultado_60min' not in df.columns:
+        df['Resultado_60min'] = np.nan
 
     ahora = datetime.now()
     for i, row in df.iterrows():
         if pd.isna(row['Resultado_60min']):
             fecha_op = datetime.strptime(str(row['Fecha']), '%Y-%m-%d %H:%M:%S')
+            
             if ahora - fecha_op > timedelta(minutes=45):
                 precio_entrada = float(row['Precio_Entrada'])
-                veredicto = float(row['Veredicto'])
+                decision = str(row['TicketDecision'])
+                
+                # Calculamos el diferencial bruto del activo
                 gain = ((precio_actual - precio_entrada) / precio_entrada) * 100
-                profit_real = gain if veredicto > 0 else -gain
+                
+                # Asignación estricta según la dirección de la orden
+                if decision == "BUY":
+                    profit_real = gain
+                elif decision == "SELL":
+                    profit_real = -gain
+                else:
+                    profit_real = 0.0 # Los "WAIT" no exponen capital
+                
                 df.at[i, 'Resultado_60min'] = round(profit_real, 4)
-                print(f"✅ Operación del {row['Fecha']} cerrada. Profit: {profit_real:+.2f}%")
+                print(f"✅ Operación ({decision}) del {row['Fecha']} cerrada. Profit Real: {profit_real:+.2f}%")
+    
     df.to_csv(CSV_FILE, index=False)
-
+    
 def ejecutar_oraculo():
     try:
         # 1. Datos y Umbral Adaptativo
