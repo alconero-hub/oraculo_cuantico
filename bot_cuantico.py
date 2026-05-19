@@ -17,6 +17,8 @@ LEARNING_RATE = 0.25 # Alto para reaccionar tras 6 horas de pausa
 UMBRAL_BASE = 0.15   # Umbral estándar
 UMBRAL_SENSITIVO = 0.08 # Umbral si el mercado está muy plano
 
+UMBRAL_CONFIANZA = 0.12 # Bajamos de 0.15 a 0.12 para capturar el movimiento antes
+
 def gestionar_memoria(n_qubits=128):
     if os.path.exists(PESOS_FILE):
         return np.load(PESOS_FILE)
@@ -145,8 +147,8 @@ def ejecutar_oraculo():
         return None
 
 def actualizar_readme(res, precio, vol, b_name):
-    if res > 0.15: est, col = "🟢 COMPRA", "green"
-    elif res < -0.15: est, col = "🔴 VENTA", "orange"
+    if res > UMBRAL_CONFIANZA: est, col = "🟢 COMPRA", "green"
+    elif res < -UMBRAL_CONFIANZA: est, col = "🔴 VENTA", "orange"
     else: est, col = "🟡 ESPERA", "yellow"
     if "Standby" in b_name: est, col = "💤 LATERAL", "lightgrey"
 
@@ -169,7 +171,7 @@ if __name__ == "__main__":
         actualizar_readme(res, p, v, b)
         nuevo = pd.DataFrame([{
             'Fecha': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-            'TicketDecision': "BUY" if res > 0.15 else ("SELL" if res < -0.15 else "WAIT"),
+            'TicketDecision': "BUY" if res > UMBRAL_CONFIANZA else ("SELL" if res < -UMBRAL_CONFIANZA else "WAIT"),
             'Veredicto': res, 'Precio_Entrada': p, 'Volatilidad': v, 'Resultado_60min': np.nan 
         }])
         if os.path.exists(CSV_FILE):
