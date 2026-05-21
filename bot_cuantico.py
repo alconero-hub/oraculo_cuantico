@@ -115,10 +115,15 @@ def ejecutar_oraculo():
         try:
             backend = service.least_busy(operational=True, simulator=False, min_num_qubits=N_QUBITS)
             dev = qml.device('qiskit.remote', wires=N_QUBITS, backend=backend, shots=N_SHOTS)
-        except Exception as e:
-            print(f"⚠️ Simulador local: {e}")
-            dev = qml.device('default.qubit', wires=N_QUBITS, shots=N_SHOTS)
-            backend = type('obj', (object,), {'name': 'Quantum-Sim-128Q'})
+      except Exception as e:
+            print(f"⚠️ Hardware real no disponible ({e}). Conectando al simulador cuántico de IBM Cloud...")
+            try:
+                # Intentamos usar el simulador oficial de IBM en la nube en lugar de tu CPU
+                backend = service.backend("ibmq_qasm_simulator")
+                dev = qml.device('qiskit.remote', wires=N_QUBITS, backend=backend, shots=N_SHOTS)
+            except Exception as e_cloud:
+                print(f"❌ Fallo total en la nube: {e_cloud}. Saltando ejecución para evitar crash.")
+                return None
 
         pesos_memoria = gestionar_memoria(N_QUBITS)
 
