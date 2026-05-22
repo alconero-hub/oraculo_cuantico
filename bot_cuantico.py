@@ -115,7 +115,7 @@ def ejecutar_oraculo():
         try:
             backend = service.least_busy(operational=True, simulator=False, min_num_qubits=N_QUBITS)
             dev = qml.device('qiskit.remote', wires=N_QUBITS, backend=backend, shots=N_SHOTS)
-      except Exception as e:
+        except Exception as e:
             print(f"⚠️ Hardware real no disponible ({e}). Conectando al simulador cuántico de IBM Cloud...")
             try:
                 # Intentamos usar el simulador oficial de IBM en la nube en lugar de tu CPU
