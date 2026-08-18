@@ -1,9 +1,9 @@
 # 🌌 Oráculo Cuántico 128Q
 ![Señal](https://img.shields.io/badge/ORÁCULO-💤%20LATERAL-lightgrey?style=for-the-badge)
-* **Precio BTC:** `$64,392.91` | **Q-Score:** `+0.0000`
+* **Precio BTC:** `$64,107.71` | **Q-Score:** `+0.0000`
 * **Hardware:** `Standby (<0.08%)` | **Shots:** `5000`
-* **Volatilidad:** `0.0740%` | **Adaptativo:** `True`
-* **Sync:** `2026-08-17 18:52:59 UTC`
+* **Volatilidad:** `0.0755%` | **Adaptativo:** `True`
+* **Sync:** `2026-08-18 13:02:39 UTC`
 
 ---
 ![Gráfica](./rendimiento_cuantico.png)
